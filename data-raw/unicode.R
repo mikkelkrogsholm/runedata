@@ -15,10 +15,18 @@ out$Rune <- out$Rune %>% str_sub(-1,-1)
 
 # font-family:"BabelStone Runic Beagnoth","BabelStone Runic Beorhtnoth","BabelStone Runic Beorhtric","BabelStone Runic Beowulf","BabelStone Runic Berhtwald","BabelStone Runic Byrhtferth",Junicode,Kelvinch,"Free Monospaced",Code2000,Hnias,"Noto Sans Runic","Segoe UI Historic","Segoe UI Symbol"
 
-
 names(out) <- names(out) %>%
-  str_to_lower() %>%
-  str_replace_all("[[:punct:]]", "_") %>%
-  str_replace_all(" ", "_") %>%
-  str_remove_all("_$")
+  snakecase::to_snake_case()
 
+out <- as_tibble(out)
+
+out[,4:8] <- map(out[,4:8], function(x){
+  ifelse(x == "", FALSE, TRUE)
+})
+
+out %>%
+  filter(younger_futhark_long_branch) %>%
+  select(code_point, rune, name)
+
+
+write_rds(out, "data-raw/data/runes_unicode.RDS")

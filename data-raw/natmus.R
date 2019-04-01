@@ -203,6 +203,8 @@ parse_natmus <- function(path){
   return(out)
 }
 
+dir_name <- "data-raw/natmus-2019-03-29"
+
 paths <- list.files(dir_name, full.names = T) %>% str_replace_all("//", "/")
 
 parsed <- map(paths, parse_natmus)
@@ -210,3 +212,7 @@ parsed <- map(paths, parse_natmus)
 stamdata <- parsed %>% map_dfr(`[[`, "stamdata")
 indskrift <- parsed %>% map_dfr(`[[`, "indskrift")
 litt <- parsed %>% map_dfr(`[[`, "litt")
+
+write_rds(stamdata, "data-raw/data/natmus_stamdata.RDS")
+write_rds(indskrift, "data-raw/data/natmus_indskrift.RDS")
+write_rds(litt, "data-raw/data/natmus_litt.RDS")

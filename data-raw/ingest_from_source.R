@@ -18,7 +18,7 @@ rundata <- readxl::read_excel(filename)
 names(rundata) <- names(rundata) %>% tolower()
 
 # Extract the rune texts
-filenames <- str_c(my_dir, c("/RUNTEXTX", "/FORNSPRX", "/FVNX", "/ENGLISHX"))
+filenames <- str_c(my_dir, c("/RUNTEXTX", "/FORNSPRX", "/FVNX", "/ENGLISH"))
 txts <- map(filenames, function(filename){
   txt <- read_lines(filename)
   lang <- txt[1] %>% str_remove("!/R ") %>%
@@ -27,7 +27,7 @@ txts <- map(filenames, function(filename){
 
   clean_txt <- map2_chr(rundata$signum, txt, function(signum, txt){
     signum <- signum %>%
-      str_replace_all("\\$", "\\$") %>%
+      str_replace_all("\\$", "\\\\$") %>%
       str_replace_all("\\?", ".")
     str_remove(txt, signum) %>% str_squish()
   })
@@ -56,4 +56,4 @@ replacements <- c("signum" = "signum", "plats" = "place", "socken" = "parish",
 names(rundata) <- recode(names(rundata), !!!replacements)
 
 # Save the data
-write_rds(rundata, "data-raw/rundata.RDS")
+write_rds(rundata, "data-raw/data/rundata.RDS")

@@ -20,9 +20,26 @@ out$operationalLayers$url
 
 https://services2.arcgis.com/gWRYLIS16mKUskSO/arcgis/rest/services/VHR_Areas/FeatureServer/0/query?where=0%3D0&outFields=%2A&f=json
 
+library(tibble)
+library(magrittr)
 
 url <- "https://services3.arcgis.com/NOhNis5i9PGy01Lu/arcgis/rest/services/RuntextdatabasenGIS_v2/FeatureServer/0/query?where=0%3D0&outFields=%2A&f=json"
 out2 <- jsonlite::fromJSON(url)
 
 attributes <- out2$features$attributes %>% as_tibble()
 geometry <- out2$features$geometry %>% as_tibble()
+
+att <- attributes %>%
+  select(Signum, Bild_3D, SRI_link)
+
+names(att) <- names(att) %>%
+  snakecase::to_snake_case()
+
+att <- att %>%
+  mutate(signum = str_squish(signum)) %>%
+  gather(type, link, - signum) %>%
+  drop_na()
+
+write_rds(att, "data-raw/data/extra.RDS")
+
+
